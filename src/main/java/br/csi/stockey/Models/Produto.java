@@ -2,6 +2,7 @@ package br.csi.stockey.Models;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,15 +26,22 @@ public class Produto{
     @UuidGenerator
     private UUID uuid;
 
+    @NotNull
     @Column(name = "nomeproduto")
     private String nomeproduto;
 
+    @NotNull
+    @Max(999)
     @Column(name = "valor")
     private double valor;
 
+    @NotNull
+    @Min(value = 0, message = "A quantidade deve ser maior ou igual a zero.")
+    @Max(value = 1000, message = "A quantidade não pode ser maior que 1000.")
     @Column(name = "quantidade")
     private int quantidade;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "idcategoria")
     private Categoria categoria;

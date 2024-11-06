@@ -8,9 +8,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/usuario")
@@ -45,7 +51,7 @@ public class UsuarioController{
 
 
     //SWAGGER - DOCUMENTAÇÃO DA API
-    @PostMapping()
+    @PostMapping("/add")
     @Operation(summary = "Adiciona Usuario",
             description = "Adiciona um Usuario no banco de dados")
     @ApiResponses(value ={
@@ -55,8 +61,14 @@ public class UsuarioController{
             @ApiResponse(responseCode = "400", description = "Erro ao salvar Usuario", content = @Content)
     })
     //ATE AQUI É DOCUMENTAÇÃO
-    public void salvar(@RequestBody Usuario usuario){
+    public ResponseEntity salvar(@RequestBody @Valid Usuario usuario, UriComponentsBuilder uriBuilder){
         this.service.Salvar(usuario);
+        URI uri = uriBuilder.path("/usuario/{uuid}").buildAndExpand(usuario.getUuid()).toUri();
+        String mensagem = "Usuario adicionado com sucesso!";
+        Map<String, Object> resposta = new HashMap<>();
+        resposta.put("mensagem", mensagem);
+        resposta.put("usuario", usuario);
+        return ResponseEntity.created(uri).body(usuario);
     }
 
 
@@ -67,19 +79,22 @@ public class UsuarioController{
         return this.service.getUsuarioByUUID(uuid);
     }
 
-    @PutMapping("/uuid")
+    @PutMapping("/atualizar")
     @Operation(summary = "Atualizar Usuario por UUID",
             description = "Atualiza um Usuario no banco de dados por UUID")
-    public void atualizarUUID(@RequestBody Usuario usuario){
+    public ResponseEntity atualizarUUID(@RequestBody @Valid Usuario usuario){
         this.service.AtualizarUUID(usuario);
+        return ResponseEntity.ok(usuario);
     }
 
     @DeleteMapping("/uuid/{uuid}")
     @Operation(summary = "Deletar Usuario por UUID",
             description = "Deleta um Usuario no banco de dados por UUID")
-    public void deletar(@PathVariable String uuid) {
+    public ResponseEntity deletar(@PathVariable String uuid) {
         this.service.deletarUUID(uuid);
+        return ResponseEntity.noContent().build();
     }
+
 
 
 }

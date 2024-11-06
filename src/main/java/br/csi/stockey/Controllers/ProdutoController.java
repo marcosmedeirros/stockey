@@ -9,9 +9,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/produto")
@@ -46,7 +52,7 @@ public class ProdutoController{
 
 
     //SWAGGER - DOCUMENTAÇÃO DA API
-    @PostMapping()
+    @PostMapping("/add")
     @Operation(summary = "Adiciona Produto",
             description = "Adiciona um Produto no banco de dados")
     @ApiResponses(value ={
@@ -55,10 +61,20 @@ public class ProdutoController{
                             schema = @Schema(implementation = Usuario.class))),
             @ApiResponse(responseCode = "400", description = "Erro ao salvar Produto", content = @Content)
     })
+
+
     //ATE AQUI É DOCUMENTAÇÃO
-    public void salvar(@RequestBody Produto produto){
+    public ResponseEntity<Object> salvar(@RequestBody @Valid Produto produto, UriComponentsBuilder uriBuilder) {
         this.service.Salvar(produto);
+        URI uri = uriBuilder.path("/produto/{uuid}").buildAndExpand(produto.getUuid()).toUri();
+        String mensagem = "Produto salvo com sucesso!";
+        Map<String, Object> resposta = new HashMap<>();
+        resposta.put("mensagem", mensagem);
+        resposta.put("produto", produto);
+
+        return ResponseEntity.created(uri).body(resposta);
     }
+
 
 
     @GetMapping("/uuid/{uuid}")
@@ -68,18 +84,21 @@ public class ProdutoController{
         return this.service.getUsuarioByUUID(uuid);
     }
 
-    @PutMapping("/uuid")
+    @PutMapping("/atualizar/{uuid}")
     @Operation(summary = "Atualizar Produto por UUID",
             description = "Atualiza um Produto no banco de dados por UUID")
-    public void atualizarUUID(@RequestBody Produto produto){
+    public ResponseEntity<Produto> atualizarUUID(@PathVariable String uuid, @RequestBody Produto produto) {
+        // Aqui você pode usar o uuid para identificar o produto que será atualizado
         this.service.AtualizarUUID(produto);
+        return ResponseEntity.ok(produto);
     }
 
     @DeleteMapping("/uuid/{uuid}")
     @Operation(summary = "Deletar Produto por UUID",
             description = "Deleta um Produto no banco de dados por UUID")
-    public void deletar(@PathVariable String uuid) {
+    public ResponseEntity deletar(@PathVariable String uuid) {
         this.service.deletarUUID(uuid);
+        return ResponseEntity.noContent().build();
     }
 
 

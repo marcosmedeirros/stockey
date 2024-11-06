@@ -9,12 +9,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigInteger;
+import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-    @RestController
+@RestController
     @RequestMapping("/categoria")
     @Tag(name = "Categorias", description = "API para gerenciamento de categoria")
     public class CategoriaController{
@@ -47,7 +53,7 @@ import java.util.List;
 
 
         //SWAGGER - DOCUMENTAÇÃO DA API
-        @PostMapping()
+        @PostMapping("/add")
         @Operation(summary = "Adiciona Categoria",
                 description = "Adiciona um Categoria no banco de dados")
         @ApiResponses(value ={
@@ -57,10 +63,15 @@ import java.util.List;
                 @ApiResponse(responseCode = "400", description = "Erro ao salvar Categoria", content = @Content)
         })
         //ATE AQUI É DOCUMENTAÇÃO
-        public void salvar(@RequestBody Categoria categoria){
+        public ResponseEntity salvar(@RequestBody @Valid Categoria categoria, UriComponentsBuilder uriBuilder){
             this.service.Salvar(categoria);
+            URI uri = uriBuilder.path("/categoria/{uuid}").buildAndExpand(categoria.getUuid()).toUri();
+            String mensagem = "Categoria salva com sucesso!";
+            Map<String, Object> resposta = new HashMap<>();
+            resposta.put("mensagem", mensagem);
+            resposta.put("categoria", categoria);
+            return ResponseEntity.created(uri).body(categoria);
         }
-
 
         @GetMapping("/uuid/{uuid}")
         @Operation(summary = "Buscar UM Categoria por UUID",
@@ -69,18 +80,21 @@ import java.util.List;
             return this.service.getUsuarioByUUID(uuid);
         }
 
-        @PutMapping("/uuid")
+        @PutMapping("/atualizar/{uuid}")
         @Operation(summary = "Atualizar Categoria por UUID",
                 description = "Atualiza um Categoria no banco de dados por UUID")
-        public void atualizarUUID(@RequestBody Categoria categoria){
+        public ResponseEntity atualizarUUID(@RequestBody Categoria categoria){
             this.service.AtualizarUUID(categoria);
+            return ResponseEntity.ok(categoria);
         }
 
         @DeleteMapping("/uuid/{uuid}")
         @Operation(summary = "Deletar Categoria por UUID",
                 description = "Deleta um Categoria no banco de dados por UUID")
-        public void deletar(@PathVariable String uuid) {
+        public ResponseEntity deletar(@PathVariable String uuid) {
             this.service.deletarUUID(uuid);
+            return ResponseEntity.noContent().build();
+
         }
 
     }
