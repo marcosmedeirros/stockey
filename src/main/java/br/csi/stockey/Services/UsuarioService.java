@@ -1,10 +1,13 @@
 package br.csi.stockey.Services;
 
+import br.csi.stockey.Models.Produto;
+import br.csi.stockey.Models.ProdutoDTO;
 import br.csi.stockey.Models.Usuario;
 import br.csi.stockey.Models.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,5 +59,18 @@ public class UsuarioService {
     @Transactional
     public void deletarUUID(String uuid){
         this.repository.deleteAlunoByUuid(UUID.fromString(uuid));
+    }
+
+
+    public String atribuirProduto(Long idproduto, Produto produto){
+        Usuario usuario = this.repository.getReferenceById(idproduto);
+        usuario.setProdutos(Collections.singletonList(produto));
+        return "Produto atribuido com sucesso";
+    }
+
+
+    public List<ProdutoDTO> findProdutosByUsuario(long idproduto) {
+        this.repository.findProdutosByUsuario(idproduto);
+        return this.repository.findProdutosByUsuario(idproduto);
     }
 }

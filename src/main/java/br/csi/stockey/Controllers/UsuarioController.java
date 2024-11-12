@@ -1,5 +1,7 @@
 package br.csi.stockey.Controllers;
 
+import br.csi.stockey.Models.Produto;
+import br.csi.stockey.Models.ProdutoDTO;
 import br.csi.stockey.Models.Usuario;
 import br.csi.stockey.Services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -93,6 +96,19 @@ public class UsuarioController{
     public ResponseEntity deletar(@PathVariable String uuid) {
         this.service.deletarUUID(uuid);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/atribuir-produto")
+    @Transactional
+    public ResponseEntity atribuirProduto(@PathVariable Long id, @RequestBody Produto produto){
+        return ResponseEntity.ok(this.service.atribuirProduto(id, produto));
+    }
+
+
+    @GetMapping("/produto/{id}")
+    public ResponseEntity<List<ProdutoDTO>> getProdutosByProjeto(@PathVariable int id) {
+        this.service.findProdutosByUsuario(id);
+        return ResponseEntity.ok(this.service.findProdutosByUsuario(id));
     }
 
 

@@ -51,6 +51,9 @@ public class ProdutoService {
         return this.repository.findProdutoByUuid(uuidformatado);
     }
 
+
+
+
     @Transactional
     public void deletarUUID(String uuid) {
         this.repository.deleteProdutoByUuid(UUID.fromString(uuid));

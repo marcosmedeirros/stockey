@@ -1,5 +1,6 @@
 package br.csi.stockey.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -21,7 +23,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Usuario {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idusuario;
 
     @UuidGenerator
@@ -45,6 +48,11 @@ public class Usuario {
 
     @Column(name = "permissao")
     private boolean permissao;
+
+
+    @OneToMany(mappedBy = "usuario")
+    @JsonIgnore
+    private List<Produto> produtos;
 
 
     public Usuario(String nomeUsuario, String emailUsuario, String senhaUsuario, boolean permissao) {
