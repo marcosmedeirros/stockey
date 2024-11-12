@@ -5,4 +5,4 @@ create table usuarios(
                        emailusuario varchar(100) not null unique,
                        senhausuario varchar(100) not null,
                        permissao boolean not null
-)
+);

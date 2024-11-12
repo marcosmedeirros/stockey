@@ -1,6 +1,7 @@
 package br.csi.stockey.Models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -41,18 +43,24 @@ public class Produto{
     @Column(name = "quantidade")
     private int quantidade;
 
-    @NotNull
+
+
     @ManyToOne
     @JoinColumn(name = "idcategoria")
     private Categoria categoria;
 
+    @ManyToOne
+    @JoinColumn(name = "idusuario")
+    private Usuario usuario;
 
 
-    public Produto(String nomeProduto, double valor, int quantidade, Categoria categoria, double notaMedia) {
-        this.nomeproduto = nomeProduto;
+
+    public Produto(String nomeproduto, double valor, int quantidade, Categoria categoria, Usuario usuario) {
+        this.nomeproduto = nomeproduto;
         this.valor = valor;
         this.quantidade = quantidade;
         this.categoria = categoria;
+        this.usuario = usuario;
     }
 
 

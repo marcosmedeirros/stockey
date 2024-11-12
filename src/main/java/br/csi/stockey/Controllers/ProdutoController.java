@@ -51,28 +51,17 @@ public class ProdutoController{
     }
 
 
-    //SWAGGER - DOCUMENTAÇÃO DA API
+
     @PostMapping("/add")
-    @Operation(summary = "Adiciona Produto",
-            description = "Adiciona um Produto no banco de dados")
-    @ApiResponses(value ={
-            @ApiResponse(responseCode = "201", description = "Produto salvo com sucesso",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Usuario.class))),
-            @ApiResponse(responseCode = "400", description = "Erro ao salvar Produto", content = @Content)
-    })
-
-
-    //ATE AQUI É DOCUMENTAÇÃO
-    public ResponseEntity<Object> salvar(@RequestBody @Valid Produto produto, UriComponentsBuilder uriBuilder) {
+    @Operation(summary = "Adiciona produto", description = "Adiciona um produto no banco de dados")
+    public ResponseEntity salvar(@RequestBody @Valid Produto produto, UriComponentsBuilder uriBuilder){
         this.service.Salvar(produto);
         URI uri = uriBuilder.path("/produto/{uuid}").buildAndExpand(produto.getUuid()).toUri();
-        String mensagem = "Produto salvo com sucesso!";
+        String mensagem = "produto adicionado com sucesso!";
         Map<String, Object> resposta = new HashMap<>();
         resposta.put("mensagem", mensagem);
         resposta.put("produto", produto);
-
-        return ResponseEntity.created(uri).body(resposta);
+        return ResponseEntity.created(uri).body(produto);
     }
 
 

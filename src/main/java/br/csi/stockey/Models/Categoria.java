@@ -22,7 +22,8 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Categoria {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idcategoria;
 
     @UuidGenerator
