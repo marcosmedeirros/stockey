@@ -1,14 +1,11 @@
 package br.csi.stockey.Controllers;
 
-import br.csi.stockey.Models.Produto;
-import br.csi.stockey.Models.ProdutoDTO;
-import br.csi.stockey.Models.Usuario;
+import br.csi.stockey.Models.Produto.Produto;
+import br.csi.stockey.Models.Produto.ProdutoDTO;
+import br.csi.stockey.Models.Usuario.DadosUsuario;
+import br.csi.stockey.Models.Usuario.Usuario;
 import br.csi.stockey.Services.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,6 +17,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/usuario")
@@ -30,43 +28,23 @@ public class UsuarioController{
         this.service = service;
     }
 
+
+
     @GetMapping("/listar")
-    @Operation(summary = "Listar Usuario",
+    @Operation(summary = "listar Usuario",
             description = "Lista todos os Usuario cadastrados no banco de dados")
-    public List<Usuario> listar(){
-        return this.service.Listar();
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Buscar o Usuario por id",
-            description = "Busca um Usuario no banco de dados por id")
-    public Usuario usuario(@PathVariable Long id){
-        return this.service.getUsuario(id);
+    public List<DadosUsuario> findAll(){
+        return this.service.findAllUsuarios();
     }
 
 
-    @PostMapping("/print-json")
-    @Operation(summary = "Print JSON",
-            description = "Printa um JSON recebido")
-    public void printJson(@RequestBody String json){
-        System.out.println(json);
-    }
-
-
-    //SWAGGER - DOCUMENTAÇÃO DA API
     @PostMapping("/add")
+    @Transactional
     @Operation(summary = "Adiciona Usuario",
             description = "Adiciona um Usuario no banco de dados")
-    @ApiResponses(value ={
-            @ApiResponse(responseCode = "201", description = "Usuario salvo com sucesso",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Usuario.class))),
-            @ApiResponse(responseCode = "400", description = "Erro ao salvar Usuario", content = @Content)
-    })
-    //ATE AQUI É DOCUMENTAÇÃO
     public ResponseEntity salvar(@RequestBody @Valid Usuario usuario, UriComponentsBuilder uriBuilder){
-        this.service.Salvar(usuario);
-        URI uri = uriBuilder.path("/usuario/{uuid}").buildAndExpand(usuario.getUuid()).toUri();
+        this.service.cadastrar(usuario);
+        URI uri = uriBuilder.path("/usuario/{uuid}").buildAndExpand(usuario.getIdusuario()).toUri();
         String mensagem = "Usuario adicionado com sucesso!";
         Map<String, Object> resposta = new HashMap<>();
         resposta.put("mensagem", mensagem);
@@ -75,11 +53,11 @@ public class UsuarioController{
     }
 
 
-    @GetMapping("/uuid/{uuid}")
+    @GetMapping("/buscar/{uuid}")
     @Operation(summary = "Buscar UM Usuario por UUID",
             description = "Busca um Usuario no banco de dados por UUID")
-    public Usuario usuario (@PathVariable String uuid){
-        return this.service.getUsuarioByUUID(uuid);
+    public DadosUsuario dadosUsuario (@PathVariable String uuid){
+        return this.service.findUsuario(UUID.fromString(uuid));
     }
 
     @PutMapping("/atualizar")
@@ -90,13 +68,16 @@ public class UsuarioController{
         return ResponseEntity.ok(usuario);
     }
 
-    @DeleteMapping("/uuid/{uuid}")
+    @DeleteMapping("/deletar/{uuid}")
     @Operation(summary = "Deletar Usuario por UUID",
             description = "Deleta um Usuario no banco de dados por UUID")
     public ResponseEntity deletar(@PathVariable String uuid) {
         this.service.deletarUUID(uuid);
         return ResponseEntity.noContent().build();
     }
+
+
+    //PARTE DO PRODUTO
 
     @PutMapping("/{id}/atribuir-produto")
     @Transactional

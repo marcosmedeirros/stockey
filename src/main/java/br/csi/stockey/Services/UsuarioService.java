@@ -1,10 +1,12 @@
 package br.csi.stockey.Services;
 
-import br.csi.stockey.Models.Produto;
-import br.csi.stockey.Models.ProdutoDTO;
-import br.csi.stockey.Models.Usuario;
-import br.csi.stockey.Models.UsuarioRepository;
+import br.csi.stockey.Models.Produto.Produto;
+import br.csi.stockey.Models.Produto.ProdutoDTO;
+import br.csi.stockey.Models.Usuario.DadosUsuario;
+import br.csi.stockey.Models.Usuario.Usuario;
+import br.csi.stockey.Models.Usuario.UsuarioRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -21,7 +23,9 @@ public class UsuarioService {
         this.repository = repository;
     }
 
-    public void Salvar(Usuario usuario){
+    public void cadastrar(Usuario usuario){
+        usuario.setSenhaUsuario(new BCryptPasswordEncoder()
+                .encode(usuario.getSenhaUsuario()));
         this.repository.save(usuario);
     }
 
@@ -29,25 +33,12 @@ public class UsuarioService {
         return this.repository.findAll();
     }
 
-    public Usuario getUsuario(Long idusuario){
-        return this.repository.findById(idusuario).get();
-    }
-
-    public void Atualizar(Usuario usuario){
-        Usuario u = this.repository.findById(usuario.getIdusuario()).get();
-        u.setNomeUsuario(usuario.getNomeUsuario());
-        u.setEmailUsuario(usuario.getEmailUsuario());
-        u.setSenhaUsuario(usuario.getSenhaUsuario());
-        u.setPermissao(usuario.isPermissao());
-        this.repository.save(u);
-    }
 
     public void AtualizarUUID(Usuario usuario){
         Usuario u = this.repository.findUsuariooByUuid(usuario.getUuid());
         u.setNomeUsuario(usuario.getNomeUsuario());
         u.setEmailUsuario(usuario.getEmailUsuario());
         u.setSenhaUsuario(usuario.getSenhaUsuario());
-        u.setPermissao(usuario.isPermissao());
         this.repository.save(u);
     }
 
@@ -73,4 +64,14 @@ public class UsuarioService {
         this.repository.findProdutosByUsuario(idproduto);
         return this.repository.findProdutosByUsuario(idproduto);
     }
+
+
+    public DadosUsuario findUsuario(UUID uuid){
+        return new DadosUsuario(this.getUsuarioByUUID(uuid.toString()));
+    }
+
+    public List<DadosUsuario> findAllUsuarios(){
+    return this.repository.findAll().stream().map(DadosUsuario::new).toList();
+    }
+
 }

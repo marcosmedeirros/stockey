@@ -1,7 +1,8 @@
-package br.csi.stockey.Models;
+package br.csi.stockey.Models.Produto;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import br.csi.stockey.Models.Categoria.Categoria;
+import br.csi.stockey.Models.Usuario.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity

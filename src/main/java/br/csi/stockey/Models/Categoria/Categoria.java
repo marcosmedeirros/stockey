@@ -1,4 +1,4 @@
-package br.csi.stockey.Models;
+package br.csi.stockey.Models.Categoria;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

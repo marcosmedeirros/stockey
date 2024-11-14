@@ -1,7 +1,7 @@
 package br.csi.stockey.Controllers;
 
-import br.csi.stockey.Models.Categoria;
-import br.csi.stockey.Models.Usuario;
+import br.csi.stockey.Models.Categoria.Categoria;
+import br.csi.stockey.Models.Usuario.Usuario;
 import br.csi.stockey.Services.CategoriaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;

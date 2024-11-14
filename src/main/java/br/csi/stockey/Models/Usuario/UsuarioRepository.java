@@ -1,6 +1,6 @@
-package br.csi.stockey.Models;
+package br.csi.stockey.Models.Usuario;
 
-import jakarta.transaction.Transactional;
+import br.csi.stockey.Models.Produto.ProdutoDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +19,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query(value = "SELECT * FROM produto WHERE idproduto IN (SELECT idproduto FROM produtoprojetos WHERE idprojeto = :id)", nativeQuery = true)
     List<ProdutoDTO> findProdutosByUsuario(@Param("id") Long id);
 
-
+    public Usuario findByEmailUsuario (String emailUsuario);
 
 }

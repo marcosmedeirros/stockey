@@ -1,9 +1,7 @@
 package br.csi.stockey.Services;
 
-import br.csi.stockey.Models.Produto;
-import br.csi.stockey.Models.ProdutoRepository;
-import br.csi.stockey.Models.Usuario;
-import br.csi.stockey.Models.UsuarioRepository;
+import br.csi.stockey.Models.Produto.Produto;
+import br.csi.stockey.Models.Produto.ProdutoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
