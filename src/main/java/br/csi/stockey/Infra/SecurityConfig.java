@@ -25,27 +25,24 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         return http
-                .csrf(csrf -> csrf.disable())
-
+                .csrf(crsf-> crsf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(
-                        HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/produtos/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CLIENTE")
-                        .requestMatchers(HttpMethod.GET, "/categorias/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CLIENTE")
-                        .requestMatchers(HttpMethod.GET, "/usuarios/**").hasAuthority("ROLE_ADMIN")
-                        )
+                .authorizeHttpRequests(auth->
+                        auth.requestMatchers(HttpMethod.POST,"/login").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/usuarios").hasAnyAuthority("ROLE_ADMIN")
+                                .requestMatchers(HttpMethod.GET,"/produtos").hasAnyAuthority("ROLE_ADMIN","ROLE_USER")
+                                .requestMatchers(HttpMethod.GET,"/produtos/*").hasAnyAuthority("ROLE_ADMIN","ROLE_USER")
+                                .anyRequest().authenticated())
                 .addFilterBefore(this.autenticacaoFilter, UsernamePasswordAuthenticationFilter.class)
-
                 .build();
     }
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
+            throws Exception{
         return configuration.getAuthenticationManager();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
