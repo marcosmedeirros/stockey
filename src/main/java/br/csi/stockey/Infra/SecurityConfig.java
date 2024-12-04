@@ -28,14 +28,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
+
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
                         HttpMethod.POST, "/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/produtos/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CLIENTE")
                         .requestMatchers(HttpMethod.GET, "/categorias/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_CLIENTE")
                         .requestMatchers(HttpMethod.GET, "/usuarios/**").hasAuthority("ROLE_ADMIN")
-                        .anyRequest().authenticated())
+                        )
                 .addFilterBefore(this.autenticacaoFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
 

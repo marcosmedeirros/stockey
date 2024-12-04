@@ -17,10 +17,11 @@ import java.io.IOException;
 public class AutenticacaoFilter extends OncePerRequestFilter {
 
     private final TokenServiceJWT tokenServiceJWT;
-    private AutenticacaoService autenticacaoService;
+    private final AutenticacaoService autenticacaoService;
 
-    public AutenticacaoFilter(TokenServiceJWT tokenServiceJWT) {
+    public AutenticacaoFilter(TokenServiceJWT tokenServiceJWT, AutenticacaoService autenticacaoService) {
         this.tokenServiceJWT = tokenServiceJWT;
+        this.autenticacaoService = autenticacaoService;
     }
 
 
@@ -34,23 +35,24 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
 
         if(tokenJWT != null){
             String subject = this.tokenServiceJWT.getSubject(tokenJWT);
-            System.out.println("Login da req: " + subject);
+            System.out.println("Login da req. "+ subject);
 
             UserDetails userDetails = this.autenticacaoService.loadUserByUsername(subject);
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
 
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
+
         filterChain.doFilter(request, response);
     }
-
-
-    private String recuperarToken(HttpServletRequest request) {
+    private String recuperarToken(HttpServletRequest request){
         String token = request.getHeader("Authorization");
-        if (token != null) {
-            return token.replace("Bearer ", "").trim();
+        if(token != null){
+            return token.replace("Bearer","").trim();
         }
         return null;
     }
 }
+
+

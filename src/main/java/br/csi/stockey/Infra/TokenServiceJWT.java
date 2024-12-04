@@ -6,21 +6,24 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-
+import java.time.*;
 
 
 @Service
 public class TokenServiceJWT {
+
+    private Instant dataExpiracao(){
+        return LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.of("-03:00"));
+    }
+
+
     public String gerarToken(User user){
         try{
             Algorithm algorithm = Algorithm.HMAC256("JWT");
             return JWT.create()
                     .withIssuer("API Stockey")
                     .withSubject(user.getUsername())
-                    .withClaim("Permissao", user.getAuthorities().toString())
+                    .withClaim("ROLE", user.getAuthorities().stream().toList().get(0).toString())
                     .withExpiresAt(dataExpiracao())
                     .sign(algorithm);
         }catch (JWTCreationException exception){
@@ -28,9 +31,7 @@ public class TokenServiceJWT {
         }
     }
 
-    private Instant dataExpiracao(){
-        return LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant();
-    }
+
 
     public String getSubject(String token){
         try{
